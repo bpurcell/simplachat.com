@@ -85,7 +85,7 @@ messagesRef.limit(limits).on('child_added', function (snapshot) {
   $('<td/>').addClass('msgCol').html(linkify(message.text)).appendTo(cont);
   cont.appendTo('#messagesDiv');
   
-   document.title = hash + 'chat - New! - ' + message.timestamp;
+   document.title = message.text.substring(0,10) + '... #'+ hash;
   
   $('#messageWrap').height( $(window).height()-($('#chatWrap').height()) ).scrollTop($('#messageWrap')[0].scrollHeight);
 });
