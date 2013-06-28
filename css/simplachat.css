@@ -109,11 +109,14 @@ padding: 1px;
     background:#efefef;
 }
 #drag_and_drop {text-align: center;
+margin: 20px;
+padding: 6px;
 border: 1px dashed #4f4f4f;
 height: 80px;
-background: url(../img/download.png) no-repeat center 40px;
+color: #000;
+background: #efefef url(../img/download.png) no-repeat center 40px;
 }
-    
+}
 #messageWrap{
     height:100%;
     overflow:scroll;

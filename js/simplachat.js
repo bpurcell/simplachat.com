@@ -5,6 +5,7 @@ if (hash === ""){
     hash = window.location.hash = Math.random().toString(36).substr(5);
     new_room = true;
 }
+$('#roomName').text(hash);
 
 var name = $.cookie(hash+'name');
 if(name == "undefined") { 
@@ -33,7 +34,7 @@ function setUserStatus(status) {
 
 userListRef.on("child_added", function(snapshot) {
   var user = snapshot.val();
-  $("#presenceDiv").append($("<div/>").attr("id", snapshot.name()));
+  $("#presenceDiv").append($("<li/>").attr("id", snapshot.name()));
   $("#" + snapshot.name()).text(user.name + "  " + user.status);
 });
 
@@ -82,20 +83,20 @@ messagesRef.limit(limits).on('child_added', function (snapshot) {
   
   var cont = $('<tr/>');
   $('<td/>').addClass('nameCol').text(message.name).append('<br>'+displayTime(message.timestamp)).appendTo(cont);
-  $('<td/>').addClass('msgCol').html(linkify(message.text)).appendTo(cont);
+  $('<td/>').addClass('msgCol').html(parseText(message.text)).appendTo(cont);
   cont.appendTo('#messagesDiv');
-  
+
    document.title = message.text.substring(0,10) + '... #'+ hash;
   
-  $('#messageWrap').height( $(window).height()-($('#chatWrap').height()) ).scrollTop($('#messageWrap')[0].scrollHeight);
-});
   
+  $('#messageWrap').height( $(window).height()-($('#chatWrap').height()) ).scrollTop($('#toolbar')[0].scrollHeight);
+});
+
 $('#messageWrap').scrollTop($('#messageWrap')[0].scrollHeight);
 
-function linkify(inputText) {
+function parseText(inputText) {
     var replacedText, replacePattern1, replacePattern2, replacePattern3;
 
-    //URLs starting with http://, https://, or ftp://
     replacePattern = /(https?:\/\/.*\.(?:png|jpg|gif|jpeg))/i;
     
     var replaced = inputText.search(replacePattern) >= 0;
@@ -103,7 +104,6 @@ function linkify(inputText) {
         replacedText = inputText.replace(replacePattern, '<img src="$1">');
         return replacedText;
     }
-    
     
     //URLs starting with http://, https://, or ftp://
     replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
@@ -126,15 +126,12 @@ function displayTime(timestamp) {
     var currentTime = new Date(timestamp)
     var hours = currentTime.getHours()
     var minutes = currentTime.getMinutes()
-    var seconds = currentTime.getSeconds()
 
     if (minutes < 10) {
         minutes = "0" + minutes
     }
-    if (seconds < 10) {
-        seconds = "0" + seconds
-    }
-    str += '<em>'+hours + ":" + minutes + ":" + seconds + "&nbsp;";
+
+    str += '<em>'+hours + ":" + minutes + " ";
     if(hours > 11){
         str += "PM </em>"
     } else {
@@ -143,24 +140,34 @@ function displayTime(timestamp) {
     return str;
 }
 
-filepicker.setKey('AO3aY4NHT1WRKxNo1mKR0z');
-filepicker.makeDropPane($('#drag_and_drop')[0], {
-    multiple: true,
-    dragEnter: function() {
-        $("#drag_and_drop").css({'border-style':'solid'});
-    },
-    dragLeave: function() {
-        $("#drag_and_drop").css({'border-style':'dashed'});
-    },
-    onSuccess: function(InkBlobs) {
-        $("#drag_and_drop").css({'border-style':'dashed'});
-        messagesRef.push({name:name, text:InkBlobs[0].url+'+name.jpg', timestamp: $.now() });
-        
-    },
-    onError: function(type, message) {
-        $("#localDropResult").text('('+type+') '+ message);
-    },
-    onProgress: function(percentage) {
-        $("#drag_and_drop").html(percentage+'%').css({'border-style':'dashed'});
-    }
+filepicker.setKey('AO3aY4NHT1WRKxNo1mKR0z');   
+$('#filepicker').change(function() {
+    var url = $('#filepicker').val()
+    messagesRef.push({name:name, text:url+'+name.jpg', timestamp: $.now() });
+    $('#filepicker').val('')
 });
+
+var addEvent = function addEvent(element, eventName, func) {
+	if (element.addEventListener) {
+    	return element.addEventListener(eventName, func, false);
+    } else if (element.attachEvent) {
+        return element.attachEvent("on" + eventName, func);
+    }
+};
+
+addEvent(document.getElementById('open-left'), 'click', function(){
+	snapper.open('left');
+});
+
+/* Prevent Safari opening links when viewing as a Mobile App */
+(function (a, b, c) {
+    if(c in b && b[c]) {
+        var d, e = a.location,
+            f = /^(a|html)$/i;
+        a.addEventListener("click", function (a) {
+            d = a.target;
+            while(!f.test(d.nodeName)) d = d.parentNode;
+            "href" in d && (d.href.indexOf("http") || ~d.href.indexOf(e.host)) && (a.preventDefault(), e.href = d.href)
+        }, !1)
+    }
+})(document, window.navigator, "standalone");
