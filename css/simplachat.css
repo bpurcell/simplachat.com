@@ -1,96 +1,104 @@
-/* http://meyerweb.com/eric/tools/css/reset/ 
-   v2.0 | 20110126
-   License: none (public domain)
-*/
-
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: top;
-}
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure, 
-footer, header, hgroup, menu, nav, section {
+/* Show "Left" drawer for the "Right" drawer in the demo */
+.snapjs-right .snap-drawer-left {
 	display: block;
-}
-body {
-	line-height: 1;
-}
-ol, ul {
-	list-style: none;
-}
-blockquote, q {
-	quotes: none;
-}
-blockquote:before, blockquote:after,
-q:before, q:after {
-	content: '';
-	content: none;
-}
-table {
-	border-collapse: collapse;
-	border-spacing: 0;
+	right: 0;
+	left: auto;
 }
 
-/**
- * Start Vanilla CSS 1.0.2 
- */ 
-body {
-	font: 9pt/1.5em sans-serif;
+/* Hide the actual "Right" drawer in the demo */
+.snapjs-right .snap-drawer-right {
+	display: none;
 }
-pre, code, tt {
-	font: 1em/1.5em 'Andale Mono', 'Lucida Console', monospace;
+
+/* Show the "Drag" background in the demo */
+#content {
+	background: #BFC7D8 url(../img/drag.png) center 75% no-repeat;
 }
-h1, h2, h3, h4, h5, h6, b, strong {
-	font-weight: bold;
+
+/* Demo toolbar styles */
+#toolbar {
+  background: #536ea7;
+  border-bottom: 1px solid #111b32;
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  width: auto;
+  height: 44px;
 }
-em, i, dfn {
-	font-style: italic;
+
+#toolbar h1 {
+  color: #fff;
+  font-size: 16px;
+  line-height: 22px;
+  text-align: center;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.8);
+  position: absolute;
+  top: 0;
+  right: 44px;
+  left: 44px;
+  width: auto;
+  height: 44px;
 }
-dfn {
-	font-weight:bold;
-}
-p, code, pre, kbd {
-	margin:0 0 1.5em 0;
+
+#open-left {
+  background: url(../img/open.png) center center no-repeat;
+  display: block;
+  width: 44px;
+  height: 44px;
 }
 
 
-address {
-	margin:0 0 1.5em;
-	font-style:italic;
-}
-del {
-	text-decoration: line-through;
-}
-pre {
-	margin:1.5em 0;
-	white-space:pre;
-}
-img {
-	max-width: 100%;
+/* Default demo styles */
+.snap-content {
+  background: #BFC7D8;
 }
 
-/* ==========================================================================
-   Author's custom styles
-   ========================================================================== */
+.snap-drawers {
+  background: #323949;
+}
 
-html,body,#container{height:100%;
-    background:#efefef;}
+.snap-drawer {
+	background: #323949;
+	color: #eee;
+}
+
+.snap-drawer h3 {
+  font-size: 36px;
+  font-weight: normal;
+  margin: 15px;
+}
+
+.snap-drawer h4 {
+  padding: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 0;
+}
+
+.snap-drawer ul {
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+
+.snap-drawer li {
+  display: block;
+  border-bottom: 1px solid rgba(0,0,0, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 15px;
+  font-weight: bold;
+  text-shadow: 0 1px 0 #000;
+  text-decoration: none;
+  color: #ccc;
+  text-indent: 20px;
+}
+
+.snap-drawer p {
+  opacity: 0.5;
+  padding: 15px;
+  font-size: 12px;
+}
+
 
 #chatWrap {
 box-shadow: -0 -5px 8px #888888;
@@ -108,15 +116,16 @@ padding: 1px;
         height:50px;    
     background:#efefef;
 }
-#drag_and_drop {text-align: center;
-margin: 20px;
-padding: 6px;
-border: 1px dashed #4f4f4f;
-height: 80px;
-color: #000;
-background: #efefef url(../img/download.png) no-repeat center 40px;
+#drag_and_drop {
+    text-align: center;
+    margin: 20px;
+    padding: 6px;
+    border: 1px dashed #4f4f4f;
+    height: 80px;
+    color: #000;
+    background: #efefef url(../img/download.png) no-repeat center 40px;
 }
-}
+    
 #messageWrap{
     height:100%;
     overflow:scroll;
@@ -124,14 +133,6 @@ background: #efefef url(../img/download.png) no-repeat center 40px;
     border-top:1px solid #efefef;
 }
 
-#whosHere {
-    padding:10px;
-        float:right;
-        width:120px;
-}
-#presenceDiv {
-    padding:20px 10px;
-}
 .nameCol {
     font-weight:bold;
     text-align:right;
@@ -154,31 +155,3 @@ background: #efefef url(../img/download.png) no-repeat center 40px;
 #messagesDiv tr:hover {
     background:white;
 }
-
-
-@media only screen and (max-width: 720px) {
-    #chatWrap {
-        height:35px;
-        box-shadow: 0 -5px 8px #888888;
-    }
-    #messagesDiv {
-        padding-bottom:50px;
-    }
-
-    #whosHere {border-bottom-left-radius:15px;
-        position:fixed;
-        top:0;
-        right:0;
-        background:white;
-        opacity:.3;
-        float:none;
-    }
-    #whosHere:hover,#whosHere:focus {
-        background:white;
-        opacity:1;
-    }
-    
-
-
-}
-
