@@ -127,6 +127,7 @@ padding: 1px;
 }
     
 #messageWrap{
+    margin-top:44px;
     height:100%;
     overflow:scroll;
     padding:4px ;
@@ -137,16 +138,18 @@ padding: 1px;
 .nameCol {
     font-weight:bold;
     text-align:right;
+vertical-align: top;
 }
 .nameCol em{
     font-weight:normal;
 }
 .msgCol,.nameCol {
     padding:12px;
+    border-top: 1px solid rgb(179, 179, 179)
 }
 
 #messagesDiv {
-    margin-bottom:15px;
+    margin-bottom:55px;
 }
 #messagesDiv tr {
     width: 100%;

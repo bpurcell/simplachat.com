@@ -90,7 +90,8 @@ messagesRef.limit(limits).on('child_added', function (snapshot) {
    document.title = message.text.substring(0,10) + '... #'+ hash;
   
   
-  $('#messageWrap').height( $(window).height()-($('#chatWrap').height()) ).scrollTop($('#toolbar')[0].scrollHeight);
+  $('#messageWrap').height( $(window).height()-($('#chatWrap').height()) );
+  $('#messageWrap').scrollTop($('#messageWrap')[0].scrollHeight);
 });
 
 $('#messageWrap').scrollTop($('#messageWrap')[0].scrollHeight);
