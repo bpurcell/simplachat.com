@@ -13,14 +13,15 @@ if(name == "undefined") {
     $.cookie(hash+'name', name,{expires: 365});
 }
 
-var currentStatus = "★",
+var currentStatus = "",
     userListRef = new Firebase("https://purcellchat.firebaseIO.com/"+hash+"/userlist"),
     myUserRef = userListRef.push(),
     connectedRef = new Firebase("https://purcellchat.firebaseIO.com/.info/connected");
+    
 connectedRef.on("value", function(isOnline) {
   if (isOnline.val()) {
     myUserRef.onDisconnect().remove();
-    setUserStatus("★");
+    setUserStatus("");
   } else {
 
     setUserStatus(currentStatus);
@@ -48,13 +49,13 @@ userListRef.on("child_changed", function(snapshot) {
 });
 
 document.onIdle = function () {
-  setUserStatus("☆");
+  setUserStatus("(Idle)");
 }
 document.onAway = function () {
-  setUserStatus("☄");
+  setUserStatus("(Away)");
 }
 document.onBack = function (isIdle, isAway) {
-  setUserStatus("★");
+  setUserStatus("");
 }
 
 setIdleTimeout(10000);
@@ -131,43 +132,55 @@ function displayTime(timestamp) {
         minutes = "0" + minutes
     }
 
-    str += '<em>'+hours + ":" + minutes + " ";
-    if(hours > 11){
-        str += "PM </em>"
-    } else {
-        str += "AM </em>"
-    }
+    str += '<em>'+hours + ":" + minutes + "</em>";
+
     return str;
 }
 
-filepicker.setKey('AO3aY4NHT1WRKxNo1mKR0z');   
-$('#filepicker').change(function() {
-    var url = $('#filepicker').val()
-    messagesRef.push({name:name, text:url+'+name.jpg', timestamp: $.now() });
-    $('#filepicker').val('')
-});
 
-var addEvent = function addEvent(element, eventName, func) {
-	if (element.addEventListener) {
-    	return element.addEventListener(eventName, func, false);
-    } else if (element.attachEvent) {
-        return element.attachEvent("on" + eventName, func);
-    }
-};
 
-addEvent(document.getElementById('open-left'), 'click', function(){
-	snapper.open('left');
-});
+if(jQuery.browser.mobile) {
 
-/* Prevent Safari opening links when viewing as a Mobile App */
-(function (a, b, c) {
-    if(c in b && b[c]) {
-        var d, e = a.location,
-            f = /^(a|html)$/i;
-        a.addEventListener("click", function (a) {
-            d = a.target;
-            while(!f.test(d.nodeName)) d = d.parentNode;
-            "href" in d && (d.href.indexOf("http") || ~d.href.indexOf(e.host)) && (a.preventDefault(), e.href = d.href)
-        }, !1)
-    }
-})(document, window.navigator, "standalone");
+    $('body').addClass('mobile');
+
+    var snapper = new Snap({
+        element: document.getElementById('content')
+    });
+    
+    var addEvent = function addEvent(element, eventName, func) {
+    	if (element.addEventListener) {
+        	return element.addEventListener(eventName, func, false);
+        } else if (element.attachEvent) {
+            return element.attachEvent("on" + eventName, func);
+        }
+    };
+    addEvent(document.getElementById('open-left'), 'click', function(){
+    	snapper.open('left');
+    });
+    $('#filepicker').hide();
+    
+    /* Prevent Safari opening links when viewing as a Mobile App */
+    (function (a, b, c) {
+        if(c in b && b[c]) {
+            var d, e = a.location,
+                f = /^(a|html)$/i;
+            a.addEventListener("click", function (a) {
+                d = a.target;
+                while(!f.test(d.nodeName)) d = d.parentNode;
+                "href" in d && (d.href.indexOf("http") || ~d.href.indexOf(e.host)) && (a.preventDefault(), e.href = d.href)
+            }, !1)
+        }
+    
+    })(document, window.navigator, "standalone");
+    
+} else {
+    filepicker.setKey('AO3aY4NHT1WRKxNo1mKR0z');   
+    $('#filepicker').change(function() {
+        var url = $('#filepicker').val()
+        messagesRef.push({name:name, text:url+'+name.jpg', timestamp: $.now() });
+        $('#filepicker').val('')
+    });
+    
+    $('body').addClass('desktop');
+    $('#open-left').hide();
+}

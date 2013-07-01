@@ -11,7 +11,7 @@
 }
 
 /* Show the "Drag" background in the demo */
-#content {
+.mobile #content {
 	background: #BFC7D8 url(../img/drag.png) center 75% no-repeat;
 }
 
@@ -131,6 +131,7 @@ padding: 1px;
     overflow:scroll;
     padding:4px ;
     border-top:1px solid #efefef;
+    width: 100%;
 }
 
 .nameCol {
@@ -143,13 +144,13 @@ padding: 1px;
 .msgCol,.nameCol {
     padding:12px;
 }
-.msgCol:hover {
-    background:rgb(217, 222, 233);
-}
+
 #messagesDiv {
     margin-bottom:15px;
 }
 #messagesDiv tr {
+    width: 100%;
+    pointer-events: none;
     border-top: 1px solid rgb(179, 179, 179)
 }
 
