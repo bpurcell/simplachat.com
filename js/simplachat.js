@@ -1,11 +1,17 @@
-var hash = window.location.hash;
-hash = hash.substr(1,hash.length);
-var new_room = false;
+$(window).on('hashchange', function() {
+  window.location.reload(true);
+});
+
+
+var hash = window.location.hash,
+    url = "https://purcellchat.firebaseIO.com/",
+    hash = hash.substr(1,hash.length),
+    new_room = false;
+    
 if (hash === ""){
     hash = window.location.hash = Math.random().toString(36).substr(5);
     new_room = true;
 }
-$('#roomName').text(hash);
 
 var name = $.cookie(hash+'name');
 if(name == "undefined") { 
@@ -14,87 +20,124 @@ if(name == "undefined") {
 }
 
 var currentStatus = "",
-    userListRef = new Firebase("https://purcellchat.firebaseIO.com/"+hash+"/userlist"),
+    userListRef = new Firebase(url+hash+"/userlist"),
     myUserRef = userListRef.push(),
-    connectedRef = new Firebase("https://purcellchat.firebaseIO.com/.info/connected");
+    connectedRef = new Firebase(url+".info/connected");
+
+
+$(document).ready(function(){
+    online();
+    messages();
+});
+
+
+function online() {
+    connectedRef.on("value", function(isOnline) {
+      if (isOnline.val()) {
+        myUserRef.onDisconnect().remove();
+        setUserStatus("");
+      } else {
+
+        setUserStatus(currentStatus);
+      }
+    });
+
+    function setUserStatus(status) {
+      currentStatus = status;
+      myUserRef.set({ name: name, status: status });
+    }
+
+    userListRef.on("child_added", function(snapshot) {
+      var user = snapshot.val();
+      $("#presenceDiv").append($("<li/>").attr("id", snapshot.name()));
+      $("#" + snapshot.name()).text(user.name + "  " + user.status);
+    });
+
+    userListRef.on("child_removed", function(snapshot) {
+      $("#" + snapshot.name()).remove();
+    });
+
+    userListRef.on("child_changed", function(snapshot) {
+      var user = snapshot.val();
+      $("#" + snapshot.name()).text(user.name + " " + user.status);
+    });
+
+    document.onIdle = function () {
+      setUserStatus("(Idle)");
+    }
+    document.onAway = function () {
+      setUserStatus("(Away)");
+    }
+    document.onBack = function (isIdle, isAway) {
+      setUserStatus("");
+    }
+
+    setIdleTimeout(10000);
+    setAwayTimeout(60000);
+        
+}
+
+function messages(){
+
+    // Get a reference to the root of the chat data.
+    var messagesRef = new Firebase(url+hash+"/chats");
+    var imageRef = new Firebase(url+hash+"/images");
+
+    // When the user presses enter on the message input, write the message to firebase.
+    $('#messageInput').keypress(function (e) {
+      if (e.keyCode == 13) {
+        var text = $('#messageInput').val();
+
+        replacePattern = /(https?:\/\/.*\.(?:png|jpg|gif|jpeg))/i;
+        console.log(text)
+        var replaced = text.search(replacePattern) >= 0;
+        if(replaced)
+            imageRef.push({name:name, image:text, timestamp: $.now() });
+        else 
+            messagesRef.push({name:name, text:text, timestamp: $.now() });   
+        
+
+        
+        $('#messageInput').val('');
+      }
+    });
+
+
+    var limits = 20;
+
+    // Add a callback that is triggered for each chat message.
+    messagesRef.limit(limits).on('child_added', function (snapshot) {
+      var message = snapshot.val();
+  
+      var cont = $('<div/>').attr('class','messageWrap');
+      $('<div/>').addClass('nameCol').text(message.name).append('<br>'+displayTime(message.timestamp)).appendTo(cont);
+      $('<div/>').addClass('msgCol').html(parseText(message.text)).appendTo(cont);
+      $('<hr>').appendTo(cont);
+      cont.appendTo('#messageWrap');
+
+       document.title = message.text.substring(0,10) + '... #'+ hash;
+      
+      $('#messageWrap').height( $(window).height()-($('#chatWrap').height()+$('#toolbar').height()) );
+      $('#messageWrap').scrollTop($('#messageWrap')[0].scrollHeight);
+    });
+
+    // Add a callback that is triggered for each chat message.
+    imageRef.limit(limits).on('child_added', function (snapshot) {
+      var message = snapshot.val();
+  
+      var cont = $('<div/>').attr('class','imageDiv');
+      $('<p/>').text(message.name).appendTo(cont);
+      $('<img/>').attr('src',message.image ).attr('width',250).appendTo(cont);
+      cont.appendTo('#imgWrap');
+      
+      $('#imgWrap').height( $(window).height()-($('#chatWrap').height()+$('#toolbar').height()) );
+      $('#imgWrap').scrollTop($('#imgWrap')[0].scrollHeight);
+    });
     
-connectedRef.on("value", function(isOnline) {
-  if (isOnline.val()) {
-    myUserRef.onDisconnect().remove();
-    setUserStatus("");
-  } else {
-
-    setUserStatus(currentStatus);
-  }
-});
-
-function setUserStatus(status) {
-  currentStatus = status;
-  myUserRef.set({ name: name, status: status });
+    $('#messageWrap').scrollTop($('#messageWrap')[0].scrollHeight);
+    
 }
 
-userListRef.on("child_added", function(snapshot) {
-  var user = snapshot.val();
-  $("#presenceDiv").append($("<li/>").attr("id", snapshot.name()));
-  $("#" + snapshot.name()).text(user.name + "  " + user.status);
-});
-
-userListRef.on("child_removed", function(snapshot) {
-  $("#" + snapshot.name()).remove();
-});
-
-userListRef.on("child_changed", function(snapshot) {
-  var user = snapshot.val();
-  $("#" + snapshot.name()).text(user.name + " " + user.status);
-});
-
-document.onIdle = function () {
-  setUserStatus("(Idle)");
-}
-document.onAway = function () {
-  setUserStatus("(Away)");
-}
-document.onBack = function (isIdle, isAway) {
-  setUserStatus("");
-}
-
-setIdleTimeout(10000);
-setAwayTimeout(60000);
-
-
-
-// Get a reference to the root of the chat data.
-var messagesRef = new Firebase("https://purcellchat.firebaseIO.com/"+hash+"/chats");
-
-// When the user presses enter on the message input, write the message to firebase.
-$('#messageInput').keypress(function (e) {
-  if (e.keyCode == 13) {
-    var text = $('#messageInput').val();
-    messagesRef.push({name:name, text:text, timestamp: $.now() });
-    $('#messageInput').val('');
-  }
-});
-
-
-var limits = 20;
-
-// Add a callback that is triggered for each chat message.
-messagesRef.limit(limits).on('child_added', function (snapshot) {
-  var message = snapshot.val();
-  
-  var cont = $('<tr/>');
-  $('<td/>').addClass('nameCol').text(message.name).append('<br>'+displayTime(message.timestamp)).appendTo(cont);
-  $('<td/>').addClass('msgCol').html(parseText(message.text)).appendTo(cont);
-  cont.appendTo('#messagesDiv');
-
-   document.title = message.text.substring(0,10) + '... #'+ hash;
-  
-  
-  $('#messageWrap').height( $(window).height()-($('#chatWrap').height()) );
-  $('#messageWrap').scrollTop($('#messageWrap')[0].scrollHeight);
-});
-
-$('#messageWrap').scrollTop($('#messageWrap')[0].scrollHeight);
 
 function parseText(inputText) {
     var replacedText, replacePattern1, replacePattern2, replacePattern3;
@@ -103,7 +146,7 @@ function parseText(inputText) {
     
     var replaced = inputText.search(replacePattern) >= 0;
     if(replaced){
-        replacedText = inputText.replace(replacePattern, '<img src="$1">');
+        replacedText = inputText.replace(replacePattern, '<img src="$1" width="400">');
         return replacedText;
     }
     
@@ -175,10 +218,13 @@ if(jQuery.browser.mobile) {
     })(document, window.navigator, "standalone");
     
 } else {
+
+    var imageRef = new Firebase(url+hash+"/images");
+    
     filepicker.setKey('AO3aY4NHT1WRKxNo1mKR0z');   
     $('#filepicker').change(function() {
         var url = $('#filepicker').val()
-        messagesRef.push({name:name, text:url+'+name.jpg', timestamp: $.now() });
+        imageRef.push({name:name, image:url+'+name.jpg', timestamp: $.now() });
         $('#filepicker').val('')
     });
     

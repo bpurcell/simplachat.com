@@ -125,35 +125,42 @@ padding: 1px;
     color: #000;
     background: #efefef url(../img/download.png) no-repeat center 40px;
 }
-    
+hr {
+    clear: both;
+}
 #messageWrap{
     margin-top:44px;
     height:100%;
     overflow:scroll;
     padding:4px ;
     border-top:1px solid #efefef;
-    width: 100%;
 }
 
-.nameCol {
-    font-weight:bold;
-    text-align:right;
-vertical-align: top;
-}
-.nameCol em{
-    font-weight:normal;
-}
-.msgCol,.nameCol {
-    padding:12px;
-    border-top: 1px solid rgb(179, 179, 179)
-}
 
 #messagesDiv {
-    margin-bottom:55px;
+    clear:left;
 }
-#messagesDiv tr {
-    width: 100%;
-    pointer-events: none;
-    border-top: 1px solid rgb(179, 179, 179)
-}
+.nameCol {
 
+    float: left;
+    width: 100px;
+    overflow: hidden;
+    padding: 4px 10px;
+    text-align: right;
+}
+.messageCol {
+
+    padding: 4px;
+    float: left;
+    width: 100%;
+}
+#imgWrap {
+    width: 250px;
+    float: right;
+    height: 100%;
+margin-top: 44px;
+    overflow: scroll;
+}
+#imageDiv {
+
+}
