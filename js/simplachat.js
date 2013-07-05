@@ -1,6 +1,4 @@
-$(window).on('hashchange', function() {
-  window.location.reload(true);
-});
+
 
 
 var hash = window.location.hash,
@@ -25,11 +23,17 @@ var currentStatus = "",
     connectedRef = new Firebase(url+".info/connected");
 
 
+    $('#roomName').text(hash);
+
 $(document).ready(function(){
     online();
     messages();
 });
+$(window).on('hashchange', function() {
+    online();
+    messages();
 
+});
 
 function online() {
     connectedRef.on("value", function(isOnline) {
@@ -103,7 +107,7 @@ function messages(){
     });
 
 
-    var limits = 20;
+    var limits = 50;
 
     // Add a callback that is triggered for each chat message.
     messagesRef.limit(limits).on('child_added', function (snapshot) {
