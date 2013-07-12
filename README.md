@@ -1,7 +1,7 @@
-simplachat.com
+Simplachat.com
 ==============
 
-Simplachat is a Firebase backed Campfire clone.   
+Simplachat is a Firebase backed Campfire (http://campfirenow.com/) clone.   
 
 I wrote it based on the samples from https://www.firebase.com/ and then added some https://www.inkfilepicker.com/
 
