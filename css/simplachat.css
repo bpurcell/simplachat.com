@@ -135,6 +135,8 @@ hr {
     padding-left:1em;
     height:100%;
     overflow:scroll;
+
+    overflow-x:hidden;
 }
 
 
@@ -160,8 +162,9 @@ hr {
     width: 250px;
     float: right;
     height: 100%;
-margin-top: 44px;
+    margin-top: 44px;
     overflow: scroll;
+    overflow-x:hidden;
 }
 #imageDiv {
 
