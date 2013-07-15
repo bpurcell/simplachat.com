@@ -112,7 +112,7 @@ function watchInput(){
 function messages(){
     
     
-    messagesRef.endAt(startsession).limit(50).on('child_added', function (snapshot) {
+    messagesRef.limit(50).on('child_added', function (snapshot) {
       var message = snapshot.val();
     
       var cont = $('<div/>').attr('class','messageDiv');
@@ -121,25 +121,11 @@ function messages(){
       $('<span/>').addClass('dateCol').html(displayTime(message.timestamp)).appendTo(cont);
       $('<hr/>').addClass('clear').appendTo(cont);
       cont.appendTo('#messageWrap');
+      document.title = message.text.substring(0,15) + '...'
 
       $('#messageWrap').scrollTop($('#messageWrap')[0].scrollHeight);
     });
-    
-    messagesRef.startAt(startsession).on('child_added', function (snapshot) {
-      var message = snapshot.val();
-    
-      var cont = $('<div/>').attr('class','messageDiv');
-      $('<span/>').addClass('nameCol').text(message.name).appendTo(cont);
-      $('<span/>').addClass('msgCol').html(parseText(message.text)).appendTo(cont);
-      $('<span/>').addClass('dateCol').html(displayTime(message.timestamp)).appendTo(cont);
-      $('<hr/>').addClass('clear').appendTo(cont);
-      cont.appendTo('#messageWrap');
 
-    
-      changeTitle(message.text)
-      
-      $('#messageWrap').scrollTop($('#messageWrap')[0].scrollHeight);
-    });
     
     
     $('#messageWrap').scrollTop($('#messageWrap')[0].scrollHeight);
@@ -166,17 +152,19 @@ function images(){
     
 }
 function changeTitle(text) {
-    document.title = text.substring(0,15) + '...';
-    
-    
+    console.log(text)
     var internalHandle = null;
     intervalHandle = setInterval(function() {
-            if (document.title == text.substring(0,15) + '...') {
-               document.title = 'Simplachat';
-            } else {
+            if (document.title == hash) {
+
+                console.log('if 1')
                 document.title = text.substring(0,15) + '...'
+            } else {
+
+                console.log('if 2')
+               document.title = 'Simplachat';
             }    
-        }, 1000);
+        }, 5000);
 }
 
 function parseText(inputText) {
