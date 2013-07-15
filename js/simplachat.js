@@ -16,22 +16,32 @@ if(name == "undefined") {
     var name = prompt("Your name?", "Visitor");
     $.cookie(hash+'name', name,{expires: 365});
 }
+$('#roomName').text(hash);
+$('#messageWrap').height( $(window).height()-($('#chatWrap').height()+$('#toolbar').height()) );
 
-var currentStatus = "",
+
+    currentStatus = "",
     userListRef = new Firebase(url+hash+"/userlist"),
     myUserRef = userListRef.push(),
-    connectedRef = new Firebase(url+".info/connected");
-
-
-    $('#roomName').text(hash);
+    connectedRef = new Firebase(url+".info/connected"),
+    messagesRef = new Firebase(url+hash+"/chats"),
+    imageRef = new Firebase(url+hash+"/images")
+    startsession = $.now();
+    
+    
+    
 
 $(document).ready(function(){
     online();
+    watchInput();
     messages();
+    images();
 });
 $(window).on('hashchange', function() {
     online();
+    watchInput();
     messages();
+    images();
 
 });
 
@@ -80,50 +90,64 @@ function online() {
     setAwayTimeout(60000);
         
 }
-
-function messages(){
-
-    // Get a reference to the root of the chat data.
-    var messagesRef = new Firebase(url+hash+"/chats");
-    var imageRef = new Firebase(url+hash+"/images");
-
+function watchInput(){
     // When the user presses enter on the message input, write the message to firebase.
     $('#messageInput').keypress(function (e) {
       if (e.keyCode == 13) {
         var text = $('#messageInput').val();
 
         replacePattern = /(https?:\/\/.*\.(?:png|jpg|gif|jpeg))/i;
-        console.log(text)
         var replaced = text.search(replacePattern) >= 0;
         if(replaced)
             imageRef.push({name:name, image:text, timestamp: $.now() });
         else 
-            messagesRef.push({name:name, text:text, timestamp: $.now() });   
+            messagesRef.push({name:name, text:text.replace(/^\s\s*/, '').replace(/\s\s*$/, '').replace(/\r?\n/g, '<br />'), timestamp: $.now() });   
         
 
         
         $('#messageInput').val('');
       }
     });
-
-
-    var limits = 50;
-
-    // Add a callback that is triggered for each chat message.
-    messagesRef.limit(limits).on('child_added', function (snapshot) {
+}
+function messages(){
+    
+    
+    messagesRef.endAt(startsession).limit(50).on('child_added', function (snapshot) {
       var message = snapshot.val();
-  
-      var cont = $('<div/>').attr('class','messageWrap');
-      $('<div/>').addClass('nameCol').text(message.name).append('<br>'+displayTime(message.timestamp)).appendTo(cont);
-      $('<div/>').addClass('msgCol').html(parseText(message.text)).appendTo(cont);
-      $('<hr>').appendTo(cont);
+    
+      var cont = $('<div/>').attr('class','messageDiv');
+      $('<span/>').addClass('nameCol').text(message.name).appendTo(cont);
+      $('<span/>').addClass('msgCol').html(parseText(message.text)).appendTo(cont);
+      $('<span/>').addClass('dateCol').html(displayTime(message.timestamp)).appendTo(cont);
+      $('<hr/>').addClass('clear').appendTo(cont);
       cont.appendTo('#messageWrap');
 
-       document.title = message.text.substring(0,10) + '... #'+ hash;
-      
-      $('#messageWrap').height( $(window).height()-($('#chatWrap').height()+$('#toolbar').height()) );
       $('#messageWrap').scrollTop($('#messageWrap')[0].scrollHeight);
     });
+    
+    messagesRef.startAt(startsession).on('child_added', function (snapshot) {
+      var message = snapshot.val();
+    
+      var cont = $('<div/>').attr('class','messageDiv');
+      $('<span/>').addClass('nameCol').text(message.name).appendTo(cont);
+      $('<span/>').addClass('msgCol').html(parseText(message.text)).appendTo(cont);
+      $('<span/>').addClass('dateCol').html(displayTime(message.timestamp)).appendTo(cont);
+      $('<hr/>').addClass('clear').appendTo(cont);
+      cont.appendTo('#messageWrap');
+
+    
+      changeTitle(message.text)
+      
+      $('#messageWrap').scrollTop($('#messageWrap')[0].scrollHeight);
+    });
+    
+    
+    $('#messageWrap').scrollTop($('#messageWrap')[0].scrollHeight);
+
+    
+}
+function images(){
+    var limits = 50;
 
     // Add a callback that is triggered for each chat message.
     imageRef.limit(limits).on('child_added', function (snapshot) {
@@ -138,10 +162,22 @@ function messages(){
       $('#imgWrap').scrollTop($('#imgWrap')[0].scrollHeight);
     });
     
-    $('#messageWrap').scrollTop($('#messageWrap')[0].scrollHeight);
+    $('#imgWrap').scrollTop($('#messageWrap')[0].scrollHeight);
     
 }
-
+function changeTitle(text) {
+    document.title = text.substring(0,15) + '...';
+    
+    
+    var internalHandle = null;
+    intervalHandle = setInterval(function() {
+            if (document.title == text.substring(0,15) + '...') {
+               document.title = 'Simplachat';
+            } else {
+                document.title = text.substring(0,15) + '...'
+            }    
+        }, 1000);
+}
 
 function parseText(inputText) {
     var replacedText, replacePattern1, replacePattern2, replacePattern3;

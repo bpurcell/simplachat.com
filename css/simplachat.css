@@ -128,31 +128,33 @@ padding: 1px;
 hr {
     clear: both;
 }
+
+
 #messageWrap{
     margin-top:44px;
+    padding-left:1em;
     height:100%;
     overflow:scroll;
-    padding:4px ;
-    border-top:1px solid #efefef;
 }
 
 
-#messagesDiv {
-    clear:left;
+.messagesDiv {
+    clear:both;
 }
-.nameCol {
+.nameCol,.messageCol,.dateCol {
 
-    float: left;
-    width: 100px;
-    overflow: hidden;
     padding: 4px 10px;
-    text-align: right;
 }
-.messageCol {
+.nameCol{
+    margin-left:-1em;
+    font-weight:bold;
+}
+.msgCol {
+}
+.dateCol {
 
-    padding: 4px;
-    float: left;
-    width: 100%;
+    float: right;
+    width: 40px;
 }
 #imgWrap {
     width: 250px;
