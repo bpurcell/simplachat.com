@@ -1,6 +1,5 @@
 
 
-
 var hash = window.location.hash,
     url = "https://purcellchat.firebaseIO.com/",
     hash = hash.substr(1,hash.length),
@@ -148,7 +147,7 @@ function images(){
       $('#imgWrap').scrollTop($('#imgWrap')[0].scrollHeight);
     });
     
-    $('#imgWrap').scrollTop($('#messageWrap')[0].scrollHeight);
+    $('#imgWrap').scrollTop($('#imgWrap')[0].scrollHeight);
     
 }
 function changeTitle(text) {
