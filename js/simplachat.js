@@ -27,8 +27,8 @@ $('#messageWrap').height( $(window).height()-($('#chatWrap').height()+$('#toolba
     imageRef = new Firebase(url+hash+"/images")
     startsession = $.now();
     
-    
-    
+
+    pingsound = new Audio("SONAR.WAV"); // buffers automatically when created
 
 $(document).ready(function(){
     online();
@@ -121,10 +121,9 @@ function messages(){
       $('<hr/>').addClass('clear').appendTo(cont);
       cont.appendTo('#messageWrap');
       document.title = message.text.substring(0,15) + '...'
-
+pingsound.play();
       $('#messageWrap').scrollTop($('#messageWrap')[0].scrollHeight);
     });
-
     
     
     $('#messageWrap').scrollTop($('#messageWrap')[0].scrollHeight);
