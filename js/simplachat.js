@@ -138,10 +138,8 @@ function messages(){
       cont.appendTo('#messageWrap');
       document.title = message.text.substring(0,15) + '...'
 
-      if(message.name != name){
-      console.log(message.name,name);
-          notications(message.name, message.text);
-      }
+      if(message.name != name) notications(message.name, message.text);
+      
       
       $('#messageWrap').scrollTop($('#messageWrap')[0].scrollHeight);
     });
@@ -163,7 +161,6 @@ function images(){
       $('<img/>').attr('src',message.image ).attr('width',250).appendTo(cont);
       cont.appendTo('#imgWrap');
       
-      $('#imgWrap').height( $(window).height()-($('#chatWrap').height()+$('#toolbar').height()) );
       $('#imgWrap').scrollTop($('#imgWrap')[0].scrollHeight);
     });
     
@@ -245,9 +242,7 @@ if(jQuery.browser.mobile) {
             return element.attachEvent("on" + eventName, func);
         }
     };
-    addEvent(document.getElementById('open-left'), 'click', function(){
-    	snapper.open('left');
-    });
+
     $('#filepicker').hide();
     
     /* Prevent Safari opening links when viewing as a Mobile App */

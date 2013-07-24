@@ -162,7 +162,6 @@ hr {
     width: 250px;
     float: right;
     height: 100%;
-    margin-top: 44px;
     overflow: scroll;
     overflow-x:hidden;
 }
