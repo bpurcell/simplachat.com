@@ -31,6 +31,7 @@ $('#messageWrap').height( $(window).height()-($('#chatWrap').height()+$('#toolba
     pingsound = new Audio("SONAR.WAV"); // buffers automatically when created
 
 $(document).ready(function(){
+    
     online();
     watchInput();
     messages();
@@ -43,7 +44,19 @@ $(window).on('hashchange', function() {
     images();
 
 });
-
+function notications(text) {
+    pingsound.play();
+      if (window.webkitNotifications.checkPermission() == 0) { // 0 is PERMISSION_ALLOWED
+        // function defined in step 2
+        notification_test = window.webkitNotifications.createNotification(
+          'img/icon.png', 'New Chat', text);
+        //notification_test.ondisplay = function() { ... do something ... };
+        //notification_test.onclose = function() { ... do something else ... };
+        notification_test.show();
+      } else {
+        window.webkitNotifications.requestPermission();
+      }
+}
 function online() {
     connectedRef.on("value", function(isOnline) {
       if (isOnline.val()) {
@@ -121,7 +134,8 @@ function messages(){
       $('<hr/>').addClass('clear').appendTo(cont);
       cont.appendTo('#messageWrap');
       document.title = message.text.substring(0,15) + '...'
-pingsound.play();
+
+      notications(message.text)
       $('#messageWrap').scrollTop($('#messageWrap')[0].scrollHeight);
     });
     
