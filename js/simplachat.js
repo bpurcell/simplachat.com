@@ -137,9 +137,12 @@ function messages(){
       $('<hr/>').addClass('clear').appendTo(cont);
       cont.appendTo('#messageWrap');
       document.title = message.text.substring(0,15) + '...'
+
       if(message.name != name){
-          notications(message.name, message.text)
+      console.log(message.name,name);
+          notications(message.name, message.text);
       }
+      
       $('#messageWrap').scrollTop($('#messageWrap')[0].scrollHeight);
     });
     
