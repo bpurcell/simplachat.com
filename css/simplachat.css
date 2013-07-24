@@ -1,14 +1,3 @@
-/* Show "Left" drawer for the "Right" drawer in the demo */
-.snapjs-right .snap-drawer-left {
-	display: block;
-	right: 0;
-	left: auto;
-}
-
-/* Hide the actual "Right" drawer in the demo */
-.snapjs-right .snap-drawer-right {
-	display: none;
-}
 
 /* Show the "Drag" background in the demo */
 .mobile #content {
